@@ -8,8 +8,13 @@
 ![React](https://img.shields.io/badge/React-19+-61DAFB?style=flat-square&logo=react)
 ![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=flat-square&logo=telegram)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase)
+![Docker](https://img.shields.io/badge/Docker-24+-2496ED?style=flat-square&logo=docker)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)
 
 **Полноценная CRM-система для игрового клуба с Telegram-ботом и Mini App**
+
+[Демо](#демо) • [Установка](#установка) • [Документация](docs/API.md) • [Развёртывание](docs/DEPLOYMENT.md)
 
 </div>
 
@@ -26,262 +31,206 @@ Gaming Club — это комплексная система управлени�
 
 ---
 
-## 🏗️ Архитектура
+## 🎯 Демо
+
+### Web Dashboard
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Gaming Club                          │
+│  🎮 Gaming Club — Операционный дашборд                      │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│    ┌──────────┐    ┌──────────┐    ┌──────────┐            │
-│    │   Web    │    │ Telegram │    │   Mini   │            │
-│    │ Browser  │    │   Bot    │    │   App    │            │
-│    └────┬─────┘    └────┬─────┘    └────┬─────┘            │
-│         │               │               │                   │
-│         └───────────────┼───────────────┘                   │
-│                         │                                   │
-│                         ▼                                   │
-│              ┌─────────────────────┐                        │
-│              │   Django REST API   │                        │
-│              │   (Backend Server)  │                        │
-│              └──────────┬──────────┘                        │
-│                         │                                   │
-│                         ▼                                   │
-│              ┌─────────────────────┐                        │
-│              │   SQLite Database   │                        │
-│              └─────────────────────┘                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │ VIP Room 1  │  │ VIP Room 2  │  │ Basic PC 1  │         │
+│  │ ✓ Свободно  │  │ ● Занято    │  │ ✓ Свободно  │         │
+│  │ 500₽/ч     │  │ 500₽/ч     │  │ 200₽/ч     │         │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ 📊 Статистика                                       │   │
+│  │ Выручка (день): 15,000₽                            │   │
+│  │ Загрузка: 75%                                       │   │
+│  │ Средний чек: 450₽                                   │   │
+│  └─────────────────────────────────────────────────────┘   │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 📦 Структура проекта
+### Telegram Bot
 
 ```
-gaming-club/
-├── config/                    # Django конфигурация
-│   ├── settings.py            # Настройки проекта
-│   ├── urls.py                # URL маршруты
-│   └── wsgi.py                # WSGI конфигурация
-│
-├── crm_core/                  # Основной CRM модуль
-│   ├── models.py              # Модели: Place, Session, Booking, Tariff, Promotion
-│   ├── views.py               # API endpoints
-│   ├── serializers.py         # DRF сериализаторы
-│   ├── services.py            # Бизнес-логика
-│   └── migrations/            # Миграции БД
-│
-├── loyalty/                   # Система лояльности
-│   ├── models.py              # Модель Client (с рефералами)
-│   ├── views.py               # API для клиентов и рефералов
-│   ├── serializers.py         # Сериализаторы клиентов
-│   └── services.py            # Логика начисления бонусов
-│
-├── templates/                 # HTML шаблоны
-│   ├── landing.html           # Главная страница
-│   ├── operations_dashboard.html  # Операционный дашборд
-│   └── super_dashboard.html   # Супер-дашборд (аналитика)
-│
-├── static/                    # Статические файлы
-│   └── css/                   # Стили
-│
-├── tg_bot/                    # Telegram бот (Node.js)
-│   ├── index.js               # Основной файл бота
-│   ├── package.json           # Зависимости
-│   └── .env.example           # Шаблон переменных
-│
-├── tg_mini_app/               # Telegram Mini App (React)
-│   ├── src/
-│   │   ├── components/        # React компоненты
-│   │   ├── pages/             # Страницы приложения
-│   │   └── lib/               # API клиент
-│   ├── public/                # Публичные файлы
-│   ├── package.json           # Зависимости
-│   ├── vite.config.js         # Vite конфигурация
-│   └── firebase.json          # Firebase Hosting
-│
-├── manage.py                  # Django управление
-├── requirements.txt           # Python зависимости
-├── docker-compose.yml         # Docker оркестрация
-└── README.md                  # Этот файл
+┌─────────────────────────────────────────┐
+│  🤖 Gaming Club Bot                     │
+├─────────────────────────────────────────┤
+│                                         │
+│  👋 Привет! Я бот Gaming Club.         │
+│                                         │
+│  📊 Статус мест:                       │
+│  • VIP Room 1 — Свободно               │
+│  • VIP Room 2 — Занято                 │
+│  • Basic PC 1 — Свободно               │
+│                                         │
+│  💳 Ваш баланс: 150 бонусов            │
+│  🏆 Ваш ранг: Постоянный               │
+│                                         │
+└─────────────────────────────────────────┘
 ```
 
 ---
 
-## 🚀 Запуск проекта
+## 🚀 Установка
 
-### 1. Backend (Django)
+### Быстрый старт (Docker)
 
 ```bash
-# Установка зависимостей
+git clone https://github.com/gggmuk/gaming-club.git
+cd gaming-club
+docker-compose up -d
+```
+
+### Ручная установка
+
+#### Backend
+
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
-
-# Применение миграций
-python manage.py makemigrations
 python manage.py migrate
-
-# Создание суперпользователя
-python manage.py createsuperuser
-
-# Запуск сервера
 python manage.py runserver
 ```
 
-Сервер будет доступен по адресу: `http://127.0.0.1:8000`
-
-### 2. Telegram Bot (Node.js)
+#### Telegram Bot
 
 ```bash
 cd tg_bot
-
-# Установка зависимостей
 npm install
-
-# Настройка .env
 cp .env.example .env
 # Отредактируйте .env и добавьте BOT_TOKEN
-
-# Запуск бота
 node index.js
 ```
 
-### 3. Mini App (React + Vite)
+#### Mini App
 
 ```bash
 cd tg_mini_app
-
-# Установка зависимостей
 npm install
-
-# Запуск dev сервера
 npm run dev
 ```
 
-Приложение будет доступно по адресу: `http://localhost:5173`
-
 ---
 
-## 🔌 API Endpoints
+## 📚 Документация
 
-### Клиенты
-
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| GET | `/api/client_info/<telegram_id>/` | Информация о клиенте |
-| POST | `/api/register_client/` | Регистрация клиента |
-| GET | `/api/clients/` | Список всех клиентов |
-
-### Места и сессии
-
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| GET | `/api/place_status/` | Статус всех мест |
-| POST | `/api/start_session/` | Начать сессию |
-| POST | `/api/stop_session/<session_id>/` | Остановить сессию |
-| POST | `/api/prolong_session/` | Продлить сессию |
-
-### Бронирования
-
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| POST | `/api/create_booking/` | Создать бронирование |
-| GET | `/api/my_bookings/<telegram_id>/` | Мои бронирования |
-| PATCH | `/api/cancel_booking/<booking_id>/` | Отменить бронирование |
-
-### Рефералы
-
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| POST | `/api/apply_referral/` | Применить реферальный код |
-| GET | `/api/referral_stats/<telegram_id>/` | Статистика рефералов |
-
-### Тарифы и акции
-
-| Метод | Endpoint | Описание |
-|-------|----------|----------|
-| GET | `/api/tariffs/` | Список тарифов |
-| POST | `/api/tariffs/manage/` | Создать тариф |
-| PUT | `/api/tariffs/<id>/` | Обновить тариф |
-| DELETE | `/api/tariffs/<id>/` | Удалить тариф |
-| GET | `/api/promotions/` | Список акций |
-| POST | `/api/promotions/` | Создать акцию |
-
----
-
-## 🎨 Функционал
-
-### Web Dashboard
-
-- 📊 Управление местами и статусами
-- 📈 Аналитика и статистика
-- 👥 Управление клиентами
-- ⚙️ Настройка тарифов и акций
-
-### Telegram Bot
-
-- 👋 Приветствие пользователей
-- 🎮 Проверка статуса мест
-- 👤 Просмотр профиля
-
-### Mini App
-
-- 🎮 Просмотр свободных мест
-- 📅 Бронирование мест
-- 👥 Реферальная программа
-- 👤 Профиль и статистика
+- [API Documentation](docs/API.md) — полное описание REST API
+- [Deployment Guide](docs/DEPLOYMENT.md) — руководство по развёртыванию
+- [Architecture](ARCHITECTURE.md) — архитектура проекта
+- [Changelog](CHANGELOG.md) — история изменений
 
 ---
 
 ## 🛠️ Технологии
 
 ### Backend
-
 - **Django 5.2** — веб-фреймворк
 - **Django REST Framework** — REST API
 - **SQLite** — база данных (можно заменить на PostgreSQL)
 
 ### Telegram Bot
-
 - **Node.js** — среда выполнения
 - **node-telegram-bot-api** — Telegram API
 - **Axios** — HTTP клиент
 
 ### Mini App
-
 - **React 19** — UI библиотека
 - **Vite** — сборщик
 - **React Router** — маршрутизация
 - **Axios** — HTTP клиент
 - **Lucide React** — иконки
 
+### Инфраструктура
+- **Docker** — контейнеризация
+- **GitHub Actions** — CI/CD
+- **Firebase** — хостинг Mini App
+
 ---
 
-## 📱 Развёртывание Mini App на Firebase
+## 📊 Структура проекта
+
+```
+gaming-club/
+├── config/                    # Django конфигурация
+├── crm_core/                  # CRM модуль
+├── loyalty/                   # Система лояльности
+├── templates/                 # HTML шаблоны
+├── static/                    # CSS/JS
+├── tg_bot/                    # Telegram бот
+├── tg_mini_app/               # Mini App (React)
+├── tests/                     # Тесты
+├── docs/                      # Документация
+├── .github/workflows/         # CI/CD
+├── docker-compose.yml         # Docker
+├── requirements.txt           # Python зависимости
+└── README.md                  # Этот файл
+```
+
+---
+
+## ✅ Тестирование
 
 ```bash
-cd tg_mini_app
-npm run deploy
+# Python тесты
+python manage.py test
+
+# С покрытием
+pytest --cov=. --cov-report=html
+
+# Node.js тесты
+cd tg_bot && npm test
+cd tg_mini_app && npm test
 ```
 
 ---
 
 ## 🔐 Безопасность
 
-### Для production:
+- ✅ CSRF защита
+- ✅ CORS настройки
+- ✅ Валидация входных данных
+- ✅ SQL injection защита (Django ORM)
+- ✅ XSS защита
 
-1. ✅ Смените `SECRET_KEY` в `settings.py`
-2. ✅ Установите `DEBUG = False`
-3. ✅ Настройте `ALLOWED_HOSTS`
-4. ✅ Используйте PostgreSQL вместо SQLite
-5. ✅ Настройте HTTPS
-6. ✅ Ограничьте CORS только для Firebase
+---
+
+## 📈 CI/CD
+
+Проект настроен для автоматического тестирования через GitHub Actions:
+
+- ✅ Python тесты (pytest)
+- ✅ Node.js тесты
+- ✅ Линтеры (flake8, eslint)
+- ✅ Форматирование (black, prettier)
+- ✅ Проверка миграций
+
+---
+
+## 🤝 Вклад в проект
+
+Мы приветствуем вклад в проект! Пожалуйста, ознакомьтесь с [руководством по вкладу](CONTRIBUTING.md) перед началом работы.
 
 ---
 
 ## 📄 Лицензия
 
-MIT
+Этот проект лицензирован под MIT License — см. файл [LICENSE](LICENSE) для деталей.
+
+---
+
+## 👨‍💻 Автор
+
+**gggmuk** — разработчик из Кыргызстана
+
+- GitHub: [@gggmuk](https://github.com/gggmuk)
 
 ---
 

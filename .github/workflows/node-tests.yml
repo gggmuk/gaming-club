@@ -1,0 +1,68 @@
+name: Node.js Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'tg_bot/**'
+      - 'tg_mini_app/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'tg_bot/**'
+      - 'tg_mini_app/**'
+
+jobs:
+  test-bot:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tg_bot
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint
+      run: npm run lint --if-present
+
+    - name: Test
+      run: npm test --if-present
+
+  test-mini-app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tg_mini_app
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
