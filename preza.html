@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Презентация</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.min.js"></script>
+    <script>
+        tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']},colors:{slate:{850:'#151e2e',900:'#0f172a'},violet:{500:'#8b5cf6',600:'#7c3aed'},emerald:{400:'#34d399',500:'#10b981'},rose:{500:'#f43f5e'}},animation:{'float':'float 6s ease-in-out infinite'},keyframes:{float:{'0%, 100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-10px)'}}}}}}
+    </script>
+    <style>
+        body { margin:0; background:#020617; display:flex; justify-content:center; align-items:center; min-height:100vh; color:#f8fafc; font-family:'Inter',sans-serif; overflow:hidden; }
+        
+        body::before, body::after { content:''; position:absolute; width:600px; height:600px; border-radius:50%; filter:blur(120px); z-index:-1; opacity:0.12; pointer-events:none; }
+        body::before { background:#8b5cf6; top:-100px; left:-100px; animation: float 10s infinite alternate; }
+        body::after { background:#10b981; bottom:-100px; right:-100px; animation: float 12s infinite alternate-reverse; }
+
+        #presentation-area { position:relative; width:1280px; height:720px; background:linear-gradient(135deg, #0f172a 0%, #020617 100%); border-radius:1.5rem; box-shadow:0 40px 80px rgba(0,0,0,1), inset 0 1px 0 rgba(255,255,255,0.05); overflow:hidden; }
+        
+        .slide { position:absolute; top:0; left:0; width:100%; height:100%; padding:4.5rem 5rem; opacity:0; pointer-events:none; transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); transform:scale(0.95); display:flex; flex-direction:column; justify-content:center;}
+        .slide.active { opacity:1; pointer-events:auto; transform:scale(1); z-index:10; }
+        
+        .glass-card { background:rgba(30,41,59,0.5); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,0.06); border-radius:1.25rem; box-shadow:0 10px 40px -10px rgba(0,0,0,0.5); transition:all 0.3s ease; }
+        .glass-card:hover { transform:translateY(-5px); border-color:rgba(139,92,246,0.4); box-shadow:0 20px 40px -10px rgba(0,0,0,0.7), 0 0 30px rgba(139,92,246,0.15); }
+        .glass-card.emerald-hover:hover { border-color:rgba(16,185,129,0.5); box-shadow:0 20px 40px -10px rgba(0,0,0,0.7), 0 0 30px rgba(16,185,129,0.15); }
+        
+        .gradient-text { background:linear-gradient(135deg,#a78bfa,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; display:inline-block; }
+        
+        .chart-container{display:flex;align-items:flex-end;height:240px;gap:6rem;border-bottom:2px dashed #334155;margin-top:2rem;padding-bottom:1rem; position:relative;}
+        .chart-group{flex:1;display:flex;justify-content:center;align-items:flex-end;gap:1.5rem;position:relative;height:100%;}
+        .chart-col{width:70px;border-radius:8px 8px 0 0;position:relative; box-shadow:0 -5px 25px rgba(0,0,0,0.3);}
+        .c-rev{background:linear-gradient(180deg,rgba(139,92,246,0.9) 0%,rgba(139,92,246,0.1) 100%); border-top:3px solid #a78bfa;}
+        .c-prof{background:linear-gradient(180deg,rgba(16,185,129,0.9) 0%,rgba(16,185,129,0.1) 100%); border-top:3px solid #34d399;}
+        .c-neg{background:linear-gradient(180deg,rgba(244,63,94,0.9) 0%,rgba(244,63,94,0.1) 100%); border-top:3px solid #fb7185;}
+        .c-val{position:absolute;top:-2rem;width:100%;text-align:center;font-weight:900;font-size:1.1rem;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
+        .c-lbl{position:absolute;bottom:-3.5rem;width:100%;text-align:center;font-weight:700;color:#cbd5e1;font-size:1.1rem;white-space:nowrap;}
+
+        .market-circles-container { position:relative; width:380px; height:380px; margin:0 auto; }
+        .m-circ { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); border-radius:50%; display:flex; align-items:flex-start; justify-content:center; font-weight:800; border:2px dashed; }
+        .m-tam { width:100%; height:100%; border-color:#475569; background:rgba(30,41,59,0.3); padding-top:2.5rem; color:#94a3b8; font-size:1.5rem; box-shadow:0 0 50px rgba(0,0,0,0.5) inset;}
+        .m-sam { width:65%; height:65%; border-color:#8b5cf6; background:rgba(139,92,246,0.15); padding-top:1.5rem; color:#c4b5fd; font-size:1.25rem; box-shadow:0 0 30px rgba(139,92,246,0.2) inset, 0 0 20px rgba(139,92,246,0.2); }
+        .m-som { width:35%; height:35%; border-color:#10b981; border-style:solid; background:rgba(16,185,129,0.25); color:#10b981; box-shadow:0 0 40px rgba(16,185,129,0.4), inset 0 0 20px rgba(16,185,129,0.2); align-items:center; flex-direction:column;}
+
+        @page { size: 1280px 720px; margin: 0; }
+        @media print {
+            body { background: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; margin:0; }
+            #presentation-area { width: 1280px !important; height: auto !important; box-shadow: none !important; background:#0f172a !important; }
+            .slide { position: relative !important; opacity: 1 !important; transform: none !important; page-break-after: always; width: 1280px !important; height: 720px !important; }
+            .no-print { display: none !important; }
+            .glass-card { background:rgba(30,41,59,1) !important; border-color:#334155 !important; }
+            * { text-shadow: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="fixed top-6 right-6 flex gap-4 z-[100] no-print">
+    <button onclick="downloadPdf()" class="bg-slate-800 border border-slate-600 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-colors"><i class="fas fa-file-pdf text-rose-500"></i> Скачать PDF</button>
+    <button id="btn-pptx" onclick="downloadPptx()" class="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-colors"><i class="fas fa-file-powerpoint"></i> Экспорт PPTX</button>
+</div>
+
+<div id="presentation-area">
+    <div class="absolute top-0 left-0 h-1.5 bg-gradient-to-r from-violet-500 via-blue-400 to-emerald-400 z-50 transition-all" id="progress-bar"></div>
+
+    <!-- 1: Title -->
+    <div class="slide flex justify-center items-center text-center">
+        <div class="max-w-4xl z-10 animate-float">
+            <div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/80 border border-violet-500/50 text-violet-300 font-bold mb-8 text-sm">
+                <i class="fas fa-rocket text-violet-400"></i> ПИТЧ ПРЕЗЕНТАЦИЯ
+            </div>
+            <h1 class="text-[5rem] font-black mb-6 text-white leading-tight drop-shadow-xl">Эволюция кибер-арен — <br><span class="gradient-text">CyberLounge</span></h1>
+            <h2 class="text-2xl text-slate-300 mb-10 max-w-3xl mx-auto font-medium">Мощная B2B SaaS платформа. Мы превращаем компьютерные клубы в высокодоходные бизнес-машины.</h2>
+            <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-lg text-slate-400 font-semibold border-t border-slate-700/50 pt-8 mt-4 mx-auto max-w-2xl">
+                <span><i class="fas fa-microchip text-violet-400 mr-2"></i> Тотальная Автоматизация</span>
+                <span><i class="fab fa-telegram text-blue-400 mr-2"></i> Лояльность в Telegram</span>
+                <span><i class="fas fa-brain text-emerald-400 mr-2"></i> AI-Прайсинг</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2: Problem -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-10 text-white">Клубы теряют гигантские деньги из-за очень примитивного софта.</h2>
+        <div class="grid grid-cols-3 gap-6 pb-4 flex-1 items-stretch">
+            <div class="glass-card p-6 lg:p-8 border-t-4 border-rose-500 relative overflow-hidden group flex flex-col">
+                <div class="absolute -right-4 -top-4 text-8xl text-rose-500 opacity-5 group-hover:scale-125 transition-transform duration-500"><i class="fas fa-desktop"></i></div>
+                <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center text-2xl mb-6 shadow-inner border border-rose-500/30"><i class="fas fa-ban"></i></div>
+                <h3 class="text-2xl font-bold mb-3 text-white z-10">Операционный Хаос</h3>
+                <p class="text-slate-400 text-base font-medium leading-relaxed z-10">Вечные бумажные тетради, устаревшее ПО и слепые зоны, ведущие к административному воровству.</p>
+            </div>
+            <div class="glass-card p-6 lg:p-8 border-t-4 border-yellow-500 relative overflow-hidden group flex flex-col">
+                <div class="absolute -right-4 -top-4 text-8xl text-yellow-500 opacity-5 group-hover:scale-125 transition-transform duration-500"><i class="fas fa-chart-line"></i></div>
+                <div class="w-14 h-14 rounded-2xl bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-2xl mb-6 shadow-inner border border-yellow-500/30"><i class="fas fa-arrow-down"></i></div>
+                <h3 class="text-2xl font-bold mb-3 text-white z-10">Упущенная Выгода</h3>
+                <p class="text-slate-400 text-base font-medium leading-relaxed z-10">Плоский прайс. Клуб недополучает 30% выручки при полной посадке и простаивает пустым по утрам.</p>
+            </div>
+            <div class="glass-card p-6 lg:p-8 border-t-4 border-slate-500 relative overflow-hidden group flex flex-col">
+                <div class="absolute -right-4 -top-4 text-8xl text-slate-500 opacity-5 group-hover:scale-125 transition-transform duration-500"><i class="fas fa-user-slash"></i></div>
+                <div class="w-14 h-14 rounded-2xl bg-slate-500/20 text-slate-400 flex items-center justify-center text-2xl mb-6 shadow-inner border border-slate-500/30"><i class="fas fa-ghost"></i></div>
+                <h3 class="text-2xl font-bold mb-3 text-white z-10">Слабое Удержание</h3>
+                <p class="text-slate-400 text-base font-medium leading-relaxed z-10">Игроки отказываются устанавливать тяжелые приложения для бронирования. Никакой виральности.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3: Solution -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-10 text-white">Решение: Экосистема в один клик</h2>
+        <div class="flex flex-col lg:flex-row gap-8 mt-4 relative items-stretch flex-1 pb-4">
+            <div class="absolute top-1/2 left-10 right-10 h-1.5 bg-gradient-to-r from-blue-500 via-violet-500 to-emerald-500 -z-10 opacity-30 blur-[2px]"></div>
+            
+            <div class="glass-card flex-1 p-8 text-center border-b-4 border-blue-500/50 group flex flex-col justify-center">
+                <i class="fab fa-telegram text-[4.5rem] text-blue-400 mb-5 group-hover:scale-110 transition-transform"></i>
+                <h3 class="text-xl font-black mb-3 text-white">Telegram Mini App</h3>
+                <p class="text-slate-400 font-medium text-sm">Бесшовная бронь ПК, прозрачная стата и система лояльности прямо в любимом мессенджере.</p>
+            </div>
+            
+            <div class="glass-card flex-1 lg:flex-[1.2] p-10 text-center bg-slate-800 border-violet-500 border-2 transform lg:scale-105 z-20 flex flex-col justify-center">
+                <i class="fas fa-server text-[5rem] text-violet-500 mb-5"></i>
+                <h3 class="text-2xl font-black mb-3 text-white">Единое API Ядро</h3>
+                <p class="text-slate-300 font-medium text-base">Стабильный Django-бэкенд. Атомарные сессии и полная защита каждой транзакции в реальном времени.</p>
+            </div>
+            
+            <div class="glass-card emerald-hover flex-1 p-8 text-center border-b-4 border-emerald-500/50 group flex flex-col justify-center">
+                <i class="fas fa-chart-pie text-[4.5rem] text-emerald-400 mb-5 group-hover:scale-110 transition-transform"></i>
+                <h3 class="text-xl font-black mb-3 text-white">Super Дашборд</h3>
+                <p class="text-slate-400 font-medium text-sm">Тотальный визуальный контроль зала для администраторов и динамический AI-Прайсинг.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4: Target Audience -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-10 text-white">Кому это жизненно необходимо?</h2>
+        <div class="grid grid-cols-2 gap-8 flex-1 pb-4 items-stretch">
+            <div class="glass-card p-10 group flex flex-col">
+                <div class="flex items-center gap-4 border-b border-slate-700 pb-6 mb-6">
+                    <div class="w-16 h-16 shrink-0 rounded-full bg-violet-600/20 text-violet-400 flex items-center justify-center text-3xl">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 class="text-3xl font-black text-white">Владельцы клубов (B2B)</h3>
+                </div>
+                <ul class="space-y-4">
+                    <li class="flex gap-4 items-start text-lg text-slate-300 font-medium"><i class="fas fa-check-circle text-violet-500 mt-1 text-xl"></i> Представители сетей и независимые арены.</li>
+                    <li class="flex gap-4 items-start text-lg text-slate-300 font-medium"><i class="fas fa-check-circle text-violet-500 mt-1 text-xl"></i> <b>Боли:</b> Желание контроля, рост выручки без найма нового персонала, точная аналитика.</li>
+                </ul>
+            </div>
+
+            <div class="glass-card emerald-hover p-10 group flex flex-col">
+                <div class="flex items-center gap-4 border-b border-slate-700 pb-6 mb-6">
+                    <div class="w-16 h-16 shrink-0 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3 class="text-3xl font-black text-white">Геймеры (B2C)</h3>
+                </div>
+                <ul class="space-y-4">
+                    <li class="flex gap-4 items-start text-lg text-slate-300 font-medium"><i class="fas fa-check-circle text-emerald-500 mt-1 text-xl"></i> Зумеры и Альфа, живущие в экосистеме Telegram.</li>
+                    <li class="flex gap-4 items-start text-lg text-slate-300 font-medium"><i class="fas fa-check-circle text-emerald-500 mt-1 text-xl"></i> <b>Потребности:</b> Статус в клубе (рейтинг), бонусы, удобная оплата и бронь без очереди.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5: Market Size -->
+    <div class="slide flex flex-col">
+        <h2 class="text-4xl lg:text-5xl font-black mb-8 text-white">Объем Рынка</h2>
+        <div class="flex flex-col md:flex-row justify-between items-center px-4 flex-1">
+            <div class="flex-1 space-y-8 pr-12 w-full">
+                <div class="border-l-4 border-slate-500 pl-6">
+                    <h3 class="text-3xl font-black mb-2 flex items-center gap-4 text-white">TAM <span class="bg-slate-800 text-slate-400 px-3 py-1 rounded border border-slate-700">$3.2 Млрд</span></h3>
+                    <p class="text-slate-400 text-base font-medium">Общий глобальный рынок ПО и управления для киберспорта.</p>
+                </div>
+                <div class="border-l-4 border-violet-500 pl-6">
+                    <h3 class="text-3xl font-black text-white mb-2 flex items-center gap-4">SAM <span class="bg-violet-900/30 text-violet-400 px-3 py-1 rounded border border-violet-500/40">$450 Млн</span></h3>
+                    <p class="text-slate-400 text-base font-medium">Клубы и арены в Восточной Европе и странах СНГ.</p>
+                </div>
+                <div class="border-l-4 border-emerald-500 pl-6">
+                    <h3 class="text-3xl font-black text-white mb-2 flex items-center gap-4">SOM <span class="bg-emerald-900/30 text-emerald-400 px-3 py-1 rounded border border-emerald-500/40">$22.5 Млн</span></h3>
+                    <p class="text-emerald-500 text-base font-bold">Наша цель: захватить 5% доступного рынка за 3 года.</p>
+                </div>
+            </div>
+            
+            <div class="flex-1 w-full mt-8 md:mt-0">
+                <div class="market-circles-container">
+                    <div class="m-circ m-tam">TAM ($3.2B)</div>
+                    <div class="m-circ m-sam">SAM ($450M)</div>
+                    <div class="m-circ m-som">
+                        <span class="font-black text-2xl">SOM</span>
+                        <span class="text-sm font-bold opacity-90 mt-1">$22.5M</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6: Business Model -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-10 text-center text-white">Простая и Смертоносная Монетизация</h2>
+        <div class="grid grid-cols-3 gap-6 px-4 items-stretch flex-1 pb-6">
+            <div class="glass-card p-8 border-t-8 border-slate-500 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-black text-slate-300 mb-2">Starter</h3>
+                    <div class="text-4xl font-black mb-6 text-white">$99<span class="text-lg text-slate-500"> /мес</span></div>
+                    <ul class="text-slate-300 space-y-3 font-medium text-base">
+                        <li class="flex gap-2"><i class="fas fa-check text-slate-500 mt-1"></i> Лимит: 20 ПК</li>
+                        <li class="flex gap-2"><i class="fas fa-check text-slate-500 mt-1"></i> Базовая CRM</li>
+                        <li class="flex gap-2"><i class="fas fa-check text-slate-500 mt-1"></i> Стандартная касса</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="glass-card p-8 border-t-8 border-violet-500 z-10 bg-slate-800 flex flex-col justify-between transform scale-105 shadow-xl">
+                <div>
+                    <div class="bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider text-white inline-block mb-2">Хит продаж</div>
+                    <h3 class="text-xl font-black text-violet-300 mb-2">Pro</h3>
+                    <div class="text-4xl font-black mb-6 text-white">$199<span class="text-lg text-violet-400"> /мес</span></div>
+                    <ul class="text-white space-y-3 font-bold text-base">
+                        <li class="flex gap-2"><i class="fas fa-check text-violet-400 mt-1"></i> Безлимит ПК</li>
+                        <li class="flex gap-2"><i class="fas fa-check text-violet-400 mt-1"></i> Динамический AI-Прайсинг</li>
+                        <li class="flex gap-2"><i class="fas fa-check text-violet-400 mt-1"></i> Telegram Mini App</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="glass-card p-8 border-t-8 border-emerald-500 emerald-hover flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-black text-emerald-300 mb-2">Enterprise</h3>
+                    <div class="text-4xl font-black mb-6 text-white">Индив.</div>
+                    <ul class="text-slate-300 space-y-3 font-medium text-base">
+                        <li class="flex gap-2"><i class="fas fa-check text-emerald-500 mt-1"></i> Управление Франшизами</li>
+                        <li class="flex gap-2"><i class="fas fa-check text-emerald-500 mt-1"></i> API Турниров</li>
+                        <li class="flex gap-2"><i class="fas fa-check text-emerald-500 mt-1"></i> Выделенный сервер</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="mt-2 text-center text-emerald-400 font-bold text-lg"><i class="fas fa-coins mr-3"></i>Плюс базовая транзакционная комиссия 1.5% с каждого платежа через платформу.</div>
+    </div>
+
+    <!-- 8: Financials Fix -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-2 text-white">Финансовые Прогнозы</h2>
+        <p class="text-emerald-400 text-lg font-bold mb-6">Достижение мощной чистой прибыли к третьему году.</p>
+        
+        <div class="glass-card p-8 w-full flex-1 flex flex-col relative mb-4">
+            <div class="absolute top-6 right-8 flex gap-6 font-bold text-sm">
+                <div class="flex items-center gap-2 text-white"><span class="w-4 h-4 rounded bg-violet-500"></span> Выручка (ARR)</div>
+                <div class="flex items-center gap-2 text-white"><span class="w-4 h-4 rounded bg-emerald-500"></span> Прибыль/Убыток</div>
+            </div>
+
+            <!-- CSS Bar Chart (Fixed Height) -->
+            <div class="chart-container w-full max-w-4xl mx-auto flex-1 h-[260px] relative">
+                
+                <div class="chart-group">
+                    <div class="chart-col c-rev" style="height: 15%;"><span class="c-val">$90k</span></div>
+                    <div class="chart-col c-neg" style="height: 10%;"><span class="c-val text-rose-400">-$20k</span></div>
+                    <div class="c-lbl">Год 1 <div class="text-xs text-slate-500 font-normal">50 Клубов</div></div>
+                </div>
+
+                <div class="chart-group">
+                    <div class="chart-col c-rev" style="height: 50%;"><span class="c-val">$450k</span></div>
+                    <div class="chart-col c-prof" style="height: 25%;"><span class="c-val">$150k</span></div>
+                    <div class="c-lbl">Год 2 <div class="text-xs text-slate-500 font-normal">250 Клубов</div></div>
+                </div>
+
+                <div class="chart-group">
+                    <div class="chart-col c-rev" style="height: 100%;"><span class="c-val">$1.4M</span></div>
+                    <div class="chart-col c-prof" style="height: 70%;"><span class="c-val">$600k</span></div>
+                    <div class="c-lbl text-emerald-400 text-xl font-black">Год 3 <div class="text-xs text-emerald-500 mt-1">800 Клубов</div></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 9: Competition -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-8 text-white">Почему монополисты проиграют?</h2>
+        <div class="glass-card overflow-hidden border border-violet-500/20 flex-1">
+            <table class="w-full text-left table-fixed">
+                <thead class="bg-slate-900 border-b border-slate-700">
+                    <tr>
+                        <th class="p-4 w-[40%] text-lg text-slate-300">Техническое Преимущество</th>
+                        <th class="p-4 w-[20%] text-violet-400 bg-violet-900/30 text-xl font-black text-center border-l border-r border-violet-500/30">CyberLounge</th>
+                        <th class="p-4 w-[20%] text-slate-400 text-lg font-bold text-center">Senet</th>
+                        <th class="p-4 w-[20%] text-slate-400 text-lg font-bold text-center">Gizmo</th>
+                    </tr>
+                </thead>
+                <tbody class="text-base font-medium">
+                    <tr class="border-b border-slate-700/50 hover:bg-slate-800/50">
+                        <td class="p-4 font-bold text-white pl-6">Telegram Mini App интеграция</td>
+                        <td class="p-4 bg-violet-900/20 border-l border-r border-violet-500/20 text-center"><i class="fas fa-check-circle text-emerald-400 text-2xl"></i></td>
+                        <td class="p-4 text-center"><i class="fas fa-times-circle text-rose-500/60 text-xl"></i></td>
+                        <td class="p-4 text-center"><i class="fas fa-times-circle text-rose-500/60 text-xl"></i></td>
+                    </tr>
+                    <tr class="border-b border-slate-700/50 hover:bg-slate-800/50">
+                        <td class="p-4 font-bold text-white pl-6">Умный AI-Прайсинг</td>
+                        <td class="p-4 bg-violet-900/20 border-l border-r border-violet-500/20 text-center"><i class="fas fa-check-circle text-emerald-400 text-2xl"></i></td>
+                        <td class="p-4 text-center"><i class="fas fa-times-circle text-rose-500/60 text-xl"></i></td>
+                        <td class="p-4 text-center"><i class="fas fa-times-circle text-rose-500/60 text-xl"></i></td>
+                    </tr>
+                    <tr class="border-b border-slate-700/50 hover:bg-slate-800/50">
+                        <td class="p-4 font-bold text-white pl-6">Чистый Cloud (Без локальных серверов)</td>
+                        <td class="p-4 bg-violet-900/20 border-l border-r border-violet-500/20 text-center"><i class="fas fa-check-circle text-emerald-400 text-2xl"></i></td>
+                        <td class="p-4 text-center"><i class="fas fa-check-circle text-emerald-400/50 text-xl"></i></td>
+                        <td class="p-4 text-center"><i class="fas fa-times-circle text-rose-500/60 text-xl"></i></td>
+                    </tr>
+                    <tr class="bg-slate-900/50">
+                        <td class="p-4 font-black text-slate-300 pl-6 border-t border-slate-700">Модель оплаты</td>
+                        <td class="p-4 bg-violet-900/40 text-violet-300 font-bold text-center text-lg border-l border-r border-t border-violet-500/40 whitespace-nowrap">$199/мес</td>
+                        <td class="p-4 text-slate-500 text-center font-bold border-t border-slate-700">Высокий %</td>
+                        <td class="p-4 text-slate-500 text-center font-bold border-t border-slate-700">Лицензии</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 10: GTM -->
+    <div class="slide">
+        <h2 class="text-4xl lg:text-5xl font-black mb-10 text-center text-white">Стратегия Быстрого Роста</h2>
+        <div class="flex flex-col md:flex-row justify-between items-stretch gap-6 px-4 pb-6 flex-1">
+            <div class="glass-card flex-1 p-8 text-center border-t-8 border-rose-500 flex flex-col justify-center">
+                <div class="text-4xl mb-4 text-rose-500"><i class="fas fa-phone-alt"></i></div>
+                <h3 class="text-xl font-black mb-3 text-white">Прямые Продажи</h3>
+                <p class="text-slate-300 text-sm font-medium">Мощный оффер владельцам: автоматизируем клуб, убираем воровство, бесплатно подключаем Telegram.</p>
+            </div>
+            
+            <div class="glass-card flex-[1.1] p-8 text-center border-t-8 border-violet-500 bg-slate-800 transform md:scale-105 z-10 flex flex-col justify-center">
+                <div class="text-4xl mb-4 text-violet-400"><i class="fas fa-microchip"></i></div>
+                <h3 class="text-xl font-black mb-3 text-white">B2B Интеграции</h3>
+                <p class="text-slate-300 text-sm font-medium">Заключаем договора с вендорами железа для поставки нашего софта "из коробки" при открытии клубов.</p>
+            </div>
+            
+            <div class="glass-card emerald-hover flex-1 p-8 text-center border-t-8 border-emerald-500 flex flex-col justify-center">
+                <div class="text-4xl mb-4 text-emerald-400"><i class="fas fa-share-nodes"></i></div>
+                <h3 class="text-xl font-black mb-3 text-white">Виральность в ТГ</h3>
+                <p class="text-slate-300 text-sm font-medium">Игроки зовут друзей по встроенной рефералке ради бесплатных часов, создавая приток лидов в клуб.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11: Ask -->
+    <div class="slide flex flex-col justify-center items-center text-center pb-4">
+        <h2 class="text-5xl lg:text-6xl font-black mb-6 w-full text-white leading-tight">Инвестируйте в Монополию на Рынке Кибер-Арен.</h2>
+        <div class="text-2xl text-slate-300 mb-10 py-2">Мы закрываем раунд <span class="font-black text-white bg-violet-600/40 px-3 py-1 rounded-lg border border-violet-500/50 whitespace-nowrap">$500,000 (Pre-Seed)</span></div>
+        
+        <div class="flex flex-col md:flex-row gap-6 max-w-4xl mb-10 w-full justify-center items-stretch">
+            <div class="glass-card p-6 md:p-8 flex items-center gap-6 border border-violet-500/30 flex-1">
+                <div class="text-4xl text-violet-400"><i class="fas fa-users-cog"></i></div>
+                <div class="text-left">
+                    <h3 class="font-black text-white text-xl mb-1">Команда Основателей</h3>
+                    <p class="text-slate-400 font-medium text-sm">Экс-управляющие премиальных арен и команда сеньор-разработчиков.</p>
+                </div>
+            </div>
+            <div class="glass-card emerald-hover p-6 md:p-8 flex items-center gap-6 border border-emerald-500/30 flex-1">
+                <div class="text-4xl text-emerald-400"><i class="fas fa-chart-pie"></i></div>
+                <div class="text-left">
+                    <h3 class="font-black text-white text-xl mb-1">Фондирование</h3>
+                    <p class="text-slate-400 font-medium text-sm"><span class="text-white font-bold">50%</span> R&D (Платформа)<br><span class="text-white font-bold">30%</span> Сейлзы, <span class="text-white font-bold">20%</span> Маркетинг.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-6 w-full justify-center items-center">
+            <a href="mailto:invest@cyberlounge.io" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-black hover:bg-slate-200 text-lg transition-transform hover:scale-105 shadow-xl">invest@cyberlounge.io</a>
+            <button class="bg-violet-600 text-white px-8 py-4 rounded-xl font-black hover:bg-violet-500 hover:shadow-[0_0_30px_#8b5cf680] text-lg transition-all hover:scale-105 shadow-xl">Посмотреть Прототип <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+    </div>
+
+    <!-- UI Controls Overlay (Cleaned) -->
+    <div class="absolute bottom-6 right-6 flex gap-4 z-50 no-print opacity-60 hover:opacity-100 transition-opacity">
+        <button onclick="prev()" class="w-12 h-12 rounded-full bg-slate-800 border border-slate-600 hover:bg-slate-700 font-bold text-xl transition-transform hover:scale-110 focus:outline-none"><i class="fas fa-chevron-left"></i></button>
+        <button onclick="next()" class="w-12 h-12 rounded-full bg-violet-600 hover:bg-violet-500 text-white font-bold text-xl transition-transform hover:scale-110 focus:outline-none shadow-lg"><i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<script>
+    let curr = 0; const s = document.querySelectorAll('.slide');
+    function show(i) {
+        if(i<0) i=0; if(i>=s.length) i=s.length-1;
+        s.forEach((e,idx) => e.classList.toggle('active', idx === i));
+        curr = i; 
+        document.getElementById('progress-bar').style.width = `${((curr+1)/s.length)*100}%`;
+    }
+    const next=()=>show(curr+1); const prev=()=>show(curr-1);
+    document.addEventListener('keydown', e => {
+        if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); next(); }
+        else if(e.key==='ArrowLeft') { e.preventDefault(); prev(); }
+    });
+    show(0);
+
+    function downloadPdf() {
+        alert("Для сохранения идеального качества PDF:\n1. Установите макет 'Альбомная' (Landscape).\n2. Удалите 'Поля' (None).\n3. Включите 'Фоновая графика' (Background graphics).");
+        window.print();
+    }
+
+    async function downloadPptx() {
+        const btn = document.getElementById('btn-pptx');
+        const origUserText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Сборка...';
+        btn.disabled = true;
+
+        let pptx = new PptxGenJS();
+        pptx.layout = 'LAYOUT_16x9'; 
+        const backupCurr = curr;
+
+        for (let i = 0; i < s.length; i++) {
+            s.forEach(e => e.classList.remove('active'));
+            s[i].classList.add('active');
+            s[i].style.transition = 'none'; 
+            await new Promise(r => setTimeout(r, 200));
+            const canvas = await html2canvas(s[i], { scale: 1.5, backgroundColor: "#0f172a" });
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+            let slide = pptx.addSlide();
+            slide.background = { color: "0f172a" };
+            slide.addImage({ data: imgData, x: 0, y: 0, w: '100%', h: '100%' });
+            s[i].style.transition = ''; 
+        }
+
+        show(backupCurr);
+        await pptx.writeFile({ fileName: "CyberLounge_Pitch_Export.pptx" });
+        btn.innerHTML = origUserText;
+        btn.disabled = false;
+    }
+</script>
+
+</body>
+</html>

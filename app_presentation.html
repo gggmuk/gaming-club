@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приложение: Скриншоты системы</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            z-index: 10;
+        }
+
+        .logo-area {
+            padding: 0 24px 24px 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .logo-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 16px;
+        }
+
+        .nav-item {
+            padding: 14px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .page-view {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+            height: 100%;
+            flex-direction: column;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            outline: none;
+        }
+
+        .page-title:focus {
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .editable-hint {
+            font-size: 13px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        /* Image Presenter */
+        .image-presenter {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            transition: all 0.3s ease;
+        }
+
+        .image-presenter:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .upload-label {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            background: rgba(15, 23, 42, 0.4);
+            transition: opacity 0.3s;
+        }
+
+        .has-image .upload-label {
+            opacity: 0;
+        }
+
+        .has-image:hover .upload-label {
+            opacity: 1;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+            z-index: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 20px;
+        }
+
+        .has-image .preview-image {
+            display: block;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Description Area */
+        .description-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .desc-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .desc-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #cbd5e1;
+            flex: 1;
+            outline: none;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background 0.3s;
+            min-height: 200px;
+        }
+
+        .desc-text:focus {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .desc-text[contenteditable]:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Action Buttons */
+        .actions-area {
+            margin-top: auto;
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Tips */
+        .onboarding-tip {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #bfdbfe;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .image-presenter {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="logo-area">
+            <h1 class="logo-title">ВКР Презентация</h1>
+            <div class="logo-subtitle">Демонстрация интерфейсов</div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-item active" data-target="page-1">
+                <i class="fa-solid fa-desktop"></i>
+                <span>Страница 1: Главная</span>
+            </div>
+            <div class="nav-item" data-target="page-2">
+                <i class="fa-solid fa-users"></i>
+                <span>Страница 2: Клиенты</span>
+            </div>
+            <div class="nav-item" data-target="page-3">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Страница 3: Аналитика</span>
+            </div>
+            <div class="nav-item" data-target="page-4">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <span>Страница 4: Мобильное</span>
+            </div>
+        </div>
+
+        <div class="actions-area">
+            <button class="action-btn btn-secondary" onclick="resetForm()">
+                <i class="fa-solid fa-rotate-right"></i> Сбросить
+            </button>
+            <button class="action-btn btn-primary" onclick="printReport()">
+                <i class="fa-solid fa-print"></i> Печать PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+
+        <!-- PAGE 1 -->
+        <div class="page-view active" id="page-1">
+            <div class="page-header">
+                <h2 class="page-title" contenteditable="true" spellcheck="false">Главный экран системы (Дашборд)</h2>
+                <div class="editable-hint"><i class="fa-solid fa-pen"></i> Текст заголовка можно редактировать (кликните)</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="image-presenter" id="presenter-1">
+                    <label class="upload-label" for="upload-1">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <div class="upload-text">Кликните, чтобы загрузить скриншот</div>
+                        <div class="upload-subtext">JPEG, PNG, WebP</div>
+                    </label>
+                    <input type="file" id="upload-1" accept="image/*" onchange="handleUpload(this, 'presenter-1', 'preview-1')">
+                    <img id="preview-1" class="preview-image" src="" alt="Скриншот 1">
+                </div>
+
+                <div class="description-card">
+                    <h3 class="desc-title"><i class="fa-solid fa-align-left"></i> Описание экрана</h3>
+                    <div class="desc-text" contenteditable="true" data-placeholder="Введите описание функционала, который представлен на данном скриншоте. Расскажите о ключевых модулях и бизнес-логике... ВЕСЬ ТЕКСТ РЕДАКТИРУЕТСЯ.">На данном экране представлен основной дашборд системы. 
+Здесь администратор может видеть ключевые метрики в реальном времени.
+
+(Кликните сюда, чтобы удалить этот текст и написать свое описание для дипломной работы!)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2 -->
+        <div class="page-view" id="page-2">
+            <div class="page-header">
+                <h2 class="page-title" contenteditable="true" spellcheck="false">Модуль управления базой клиентов</h2>
+                <div class="editable-hint"><i class="fa-solid fa-pen"></i> Текст заголовка можно редактировать (кликните)</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="image-presenter" id="presenter-2">
+                    <label class="upload-label" for="upload-2">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <div class="upload-text">Загрузить скриншот раздела</div>
+                    </label>
+                    <input type="file" id="upload-2" accept="image/*" onchange="handleUpload(this, 'presenter-2', 'preview-2')">
+                    <img id="preview-2" class="preview-image" src="" alt="Скриншот 2">
+                </div>
+
+                <div class="description-card">
+                    <h3 class="desc-title"><i class="fa-solid fa-align-left"></i> Описание функционала</h3>
+                    <div class="desc-text" contenteditable="true" data-placeholder="Опишите, как работает данный модуль... ВЕСЬ ТЕКСТ РЕДАКТИРУЕТСЯ."></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3 -->
+        <div class="page-view" id="page-3">
+            <div class="page-header">
+                <h2 class="page-title" contenteditable="true" spellcheck="false">Финансовая аналитика и отчетность</h2>
+                <div class="editable-hint"><i class="fa-solid fa-pen"></i> Текст заголовка можно редактировать (кликните)</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="image-presenter" id="presenter-3">
+                    <label class="upload-label" for="upload-3">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <div class="upload-text">Загрузить скриншот графиков/отчетов</div>
+                    </label>
+                    <input type="file" id="upload-3" accept="image/*" onchange="handleUpload(this, 'presenter-3', 'preview-3')">
+                    <img id="preview-3" class="preview-image" src="" alt="Скриншот 3">
+                </div>
+
+                <div class="description-card">
+                    <h3 class="desc-title"><i class="fa-solid fa-align-left"></i> Анализ данных</h3>
+                    <div class="desc-text" contenteditable="true" data-placeholder="Разъясните представленные метрики и графики... ВЕСЬ ТЕКСТ РЕДАКТИРУЕТСЯ."></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 4 -->
+        <div class="page-view" id="page-4">
+            <div class="page-header">
+                <h2 class="page-title" contenteditable="true" spellcheck="false">Интеграция с Telegram / Mini App</h2>
+                <div class="editable-hint"><i class="fa-solid fa-pen"></i> Текст заголовка можно редактировать (кликните)</div>
+            </div>
+
+            <div class="content-grid">
+                <div class="image-presenter" id="presenter-4">
+                    <label class="upload-label" for="upload-4">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <div class="upload-text">Загрузить скриншот бота/приложения</div>
+                    </label>
+                    <input type="file" id="upload-4" accept="image/*" onchange="handleUpload(this, 'presenter-4', 'preview-4')">
+                    <img id="preview-4" class="preview-image" src="" alt="Скриншот 4">
+                </div>
+
+                <div class="description-card">
+                    <h3 class="desc-title"><i class="fa-solid fa-align-left"></i> Пользовательский опыт</h3>
+                    <div class="desc-text" contenteditable="true" data-placeholder="Опишите процесс взаимодействия через Telegram... ВЕСЬ ТЕКСТ РЕДАКТИРУЕТСЯ."></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="onboarding-tip" id="onboard-tip">
+            <i class="fa-solid fa-lightbulb text-yellow-300"></i>
+            <span>Можно вставить свои картинки и текст, а затем распечатать в PDF для ВКР!</span>
+        </div>
+
+    </div>
+
+    <!-- Print Styles injected via JS to format for A4 beautifully -->
+    <style id="print-style"></style>
+
+    <script>
+        // Navigation Logic
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page-view');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all
+                navItems.forEach(nav => nav.classList.remove('active'));
+                pages.forEach(page => page.classList.remove('active'));
+
+                // Add active class to clicked item
+                item.classList.add('active');
+                
+                // Show target page
+                const targetId = item.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Hide onboarding tip after a few seconds
+        setTimeout(() => {
+            const tip = document.getElementById('onboard-tip');
+            if(tip) {
+                tip.style.opacity = '0';
+                tip.style.transition = 'opacity 1s ease';
+                setTimeout(() => tip.remove(), 1000);
+            }
+        }, 8000);
+
+        // Upload and Preview Logic
+        function handleUpload(input, presenterId, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.getElementById(previewId);
+                    img.src = e.target.result;
+                    document.getElementById(presenterId).classList.add('has-image');
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            if(confirm("Вы уверены, что хотите сбросить все изображения и изменения текстов?")) {
+                location.reload();
+            }
+        }
+
+        // Print and Export Logic
+        function printReport() {
+            // Generating beautiful print CSS on the fly to support A4 export
+            const printCss = `
+                @media print {
+                    body {
+                        background: white !important;
+                        color: black !important;
+                        display: block !important;
+                        height: auto !important;
+                        overflow: visible !important;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                    .sidebar { display: none !important; }
+                    .main-content { padding: 0 !important; display: block !important; overflow: visible !important; }
+                    .page-view {
+                        display: flex !important;
+                        page-break-after: always;
+                        height: 100vh !important;
+                        padding: 15mm !important;
+                        box-sizing: border-box !important;
+                        opacity: 1 !important;
+                        transform: none !important;
+                        animation: none !important;
+                    }
+                    .page-header { margin-bottom: 20px !important; }
+                    .page-title { color: black !important; border: none !important; font-size: 24pt !important; text-align: center !important; }
+                    .editable-hint { display: none !important; }
+                    .content-grid { display: flex !important; flex-direction: column !important; gap: 20px !important; height: calc(100% - 80px) !important; }
+                    .image-presenter { 
+                        flex: 1 !important; 
+                        border: none !important; 
+                        background: transparent !important; 
+                        box-shadow: none !important; 
+                        min-height: 0 !important;
+                    }
+                    .upload-label { display: none !important; }
+                    .description-card { 
+                        background: transparent !important; 
+                        border: none !important; 
+                        padding: 0 !important; 
+                        box-shadow: none !important; 
+                        min-height: 150px !important;
+                    }
+                    .desc-title { color: black !important; border-bottom: 1px solid #ccc !important; font-size: 16pt !important; }
+                    .desc-text { color: black !important; font-size: 14pt !important; text-align: justify !important; border: none !important; }
+                    .preview-image { max-height: 100% !important; border: 1px solid #eee !important; box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important; border-radius: 8px !important;}
+                    * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+                }
+            `;
+            document.getElementById('print-style').innerHTML = printCss;
+            
+            // Invoke print
+            window.print();
+        }
+    </script>
+</body>
+</html>

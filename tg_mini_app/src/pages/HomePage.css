@@ -1,0 +1,178 @@
+.home-page { padding-top: 16px; }
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #818cf8, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Status Summary Bar */
+.status-summary {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.summary-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.summary-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.summary-chip .dot.green { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+.summary-chip .dot.red { background: #ef4444; }
+.summary-chip .dot.amber { background: #f59e0b; }
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.filter-tab {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.filter-tab.active {
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(236,72,153,0.1));
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
+.places-grid { display: grid; gap: 14px; }
+
+.place-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+}
+.place-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+.place-card.free::before { background: linear-gradient(90deg, #10b981, #34d399); }
+.place-card.occupied::before { background: linear-gradient(90deg, #6366f1, #ec4899); }
+.place-card.maintenance::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+.place-card:active { transform: scale(0.98); }
+
+.place-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.place-icon {
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+.place-icon.vip { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+.place-icon.basic { background: linear-gradient(135deg, #6366f1, #818cf8); color: white; }
+.place-icon.bootcamp { background: linear-gradient(135deg, #ec4899, #f472b6); color: white; }
+
+.place-header h3 { font-size: 17px; margin-bottom: 2px; }
+.place-type { font-size: 11px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.place-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.place-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.place-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary-light);
+    margin-bottom: 14px;
+    letter-spacing: -0.02em;
+}
+
+.place-tariff-name {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.place-client {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.place-time {
+    font-size: 12px;
+    color: var(--accent-amber);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.btn-book {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.loading { text-align: center; padding: 60px; color: var(--text-muted); }
